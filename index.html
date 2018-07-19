@@ -87,98 +87,86 @@ nav ul {
   top: 100%;
 }
 </style>
+
+<script src="vue.min.js"></script>
 </head>
-
 <body>
+<main id="app">
+  <header>
+    <h1>Accessible Drop Down Menu</h1>
+  </header>
 
-<h1>Accessible Drop Down Menu</h1>
-<nav role="navigation">
-  <ul class="access-menu">
-    <li>
-      <a href="#">Womens</a>
-      <ul class="access-submenu">
-        <li>
-          <a href="#">Featured</a>
-        </li>
-        <li>
-          <a href="#">Shoes</a>
-        </li>
-        <li>
-          <a href="#">Clothing</a>
-        </li>
-        <li>
-          <a href="#">Accessories</a>
-        </li>
-        <li>
-          <a href="#">Sports</a>
-        </li>
-        <li>
-          <a href="#">Sale</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a href="#">Mens</a>
-      <ul class="access-submenu">
-        <li>
-          <a href="#">Featured</a>
-        </li>
-        <li>
-          <a href="#">Shoes</a>
-        </li>
-        <li>
-          <a href="#">Clothing</a>
-        </li>
-        <li>
-          <a href="#">Accessories</a>
-        </li>
-        <li>
-          <a href="#">Sports</a>
-        </li>
-        <li>
-          <a href="#">Sale</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a href="#">Kids</a>
-      <ul class="access-submenu">
-        <li>
-          <a href="#">Featured</a>
-        </li>
-        <li>
-          <a href="#">Boys</a>
-        </li>
-        <li>
-          <a href="#">Girls</a>
-        </li>
-        <li>
-          <a href="#">Infant</a>
-        </li>
-        <li>
-          <a href="#">Sale</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a href="#">Sale</a>
-      <ul class="access-submenu">
-        <li>
-          <a href="#">Men's Sale</a>
-        </li>
-        <li>
-          <a href="#">Women's Sale</a>
-        </li>
-        <li>
-          <a href="#">Plus Sale</a>
-        </li>
-        <li>
-          <a href="#">Kids' Sale</a>
-        </li>
-      </ul>
-    </li>
-  </ul>
-</nav>
+  <nav role="navigation">
+    <ul role="menubar" class="access-menu">
+      <li
+        role="menuitem"
+        v-for="(n, index) in nav"
+        :key="index">
+        <a href="#">{{n.name}}</a>
+        <ul
+          class="access-submenu"
+          v-if="n.children.length">
+          <li
+            role="menuitem"
+            v-for="(c, c_index) in n.children"
+            :key="c_index">
+            <a href="#">{{c}}</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</main>
 
+<script>
+var app = new Vue({
+  el: '#app',
+  data: {
+    nav: [
+      {
+        name: 'Women',
+        children: [
+          'Featured',
+          'Shoes',
+          'Clothing',
+          'Accessories',
+          'Sports',
+          'Sale'
+        ]
+      },
+      {
+        name: 'Men',
+        children: [
+          'Featured',
+          'Shoes',
+          'Clothing',
+          'Accessories',
+          'Sports',
+          'Sale'
+        ]
+      },
+      {
+        name: 'Kids',
+        children: [
+          'Featured',
+          'Boys',
+          'Girls',
+          'Infant',
+          'Sale'
+        ]
+      },
+      {
+        name: 'Sale',
+        children: [
+          'Men\'s Sale',
+          'Women\'s Sale',
+          'Plus Sale',
+          'Kids\' Sale'
+        ]
+      }
+    ]
+  }
+})
+</script>
 </body>
 </html>
