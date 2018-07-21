@@ -61,6 +61,22 @@ nav ul {
   transition: all .2s linear;
 }
 
+.access-menu a:hover,
+.access-menu a:focus {
+  background-color: #ccc;
+  color: black;
+}
+
+.access-menu a:focus {
+  outline: none;
+}
+
+.access-menu li:hover .access-submenu,
+.access-menu a:hover ~ .access-submenu,
+.access-menu a:focus ~ .access-submenu {
+  display: block;
+}
+
 .access-submenu {
   background: #444;
   top: 100%;
@@ -102,20 +118,22 @@ nav ul {
 
   <nav role="navigation">
     <ul
-      role="menubar"
+      role="menu"
       class="access-menu">
       <li
         role="menuitem"
         :aria-haspopup="!!n.children.length"
-        :aria-expanded="n.children.length > 0 && n.showChildren"
+        :aria-expanded="n.children.length > 0 && isItemFocused(n)"
         v-for="(n, index) in nav"
         :key="index"
-        @mouseover="n.showChildren = true"
-        @mouseout="n.showChildren = false">
-        <a href="#">{{n.name}}</a>
+        @mouseover="navItemFocus(n)"
+        @mouseout="selectedNavItem = false">
+        <a
+          @focus="navItemFocus(n)"
+          href="#">{{n.name}}</a>
         <ul
           class="access-submenu"
-          :class="{'is-show': n.showChildren}"
+          :class="{'is-show': isItemFocused(n)}"
           v-if="n.children.length">
           <li
             role="menuitem"
@@ -133,10 +151,10 @@ nav ul {
 var app = new Vue({
   el: '#app',
   data: {
+    selectedNavItem: false,
     nav: [
       {
         name: 'Women',
-        showChildren: false,
         children: [
           'Featured',
           'Shoes',
@@ -148,7 +166,6 @@ var app = new Vue({
       },
       {
         name: 'Men',
-        showChildren: false,
         children: [
           'Featured',
           'Shoes',
@@ -160,7 +177,6 @@ var app = new Vue({
       },
       {
         name: 'Kids',
-        showChildren: false,
         children: [
           'Featured',
           'Boys',
@@ -171,7 +187,6 @@ var app = new Vue({
       },
       {
         name: 'Sale',
-        showChildren: false,
         children: [
           'Men\'s Sale',
           'Women\'s Sale',
@@ -180,6 +195,14 @@ var app = new Vue({
         ]
       }
     ]
+  },
+  methods: {
+    navItemFocus (i) {
+      this.selectedNavItem = i
+    },
+    isItemFocused (i) {
+      return this.selectedNavItem === i
+    }
   }
 })
 </script>
