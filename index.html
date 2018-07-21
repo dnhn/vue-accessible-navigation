@@ -106,6 +106,10 @@ nav ul {
   left: auto;
   top: 100%;
 }
+
+.guide {
+  margin: 2em;
+}
 </style>
 
 <script src="vue.min.js"></script>
@@ -116,21 +120,23 @@ nav ul {
     <h1>Accessible Drop Down Menu</h1>
   </header>
 
+  <p class="guide">Use tab, arrow keys to navigate through the menu.</p>
+
   <nav role="navigation">
     <ul
       role="menu"
       class="access-menu">
       <li
         role="menuitem"
-        :aria-haspopup="!!n.children.length"
-        :aria-expanded="n.children.length > 0 && isItemFocused(n)"
+        :aria-haspopup="n.children && !!n.children.length"
+        :aria-expanded="n.children && n.children.length > 0 && isItemFocused(n)"
         v-for="(n, index) in nav"
         :key="index"
         @mouseover="navItemFocus(n)"
         @mouseout="selectedNavItem = false"
         @keyup.left="prevNavItem(index, nav)"
         @keyup.right="nextNavItem(index, nav)"
-        @keyup.down="!selectedNavChild ? nextNavChild(-1, n.children) : ''">
+        @keyup.down="n.children && !selectedNavChild ? nextNavChild(-1, n.children) : ''">
         <a
           v-change-focus
           :is-focused="n === selectedNavItem"
@@ -139,7 +145,7 @@ nav ul {
         <ul
           class="access-submenu"
           :class="{'is-show': isItemFocused(n)}"
-          v-if="n.children.length">
+          v-if="n.children && n.children.length">
           <li
             role="menuitem"
             v-for="(c, c_index) in n.children"
@@ -163,9 +169,9 @@ new Vue({
   directives: {
     changeFocus: {
       componentUpdated: (el, binding, vnode) => {
-        if (vnode.data.attrs['is-focused']) {
-          el.focus()
-        }
+        vnode.data.attrs['is-focused'] ?
+          el.focus() :
+          el.blur()
       }
     }
   },
@@ -213,7 +219,8 @@ new Vue({
           'Plus Sale',
           'Kids\' Sale'
         ]
-      }
+      },
+      { name: 'Customise' }
     ]
   },
   methods: {
