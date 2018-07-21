@@ -127,8 +127,13 @@ nav ul {
         v-for="(n, index) in nav"
         :key="index"
         @mouseover="navItemFocus(n)"
-        @mouseout="selectedNavItem = false">
+        @mouseout="selectedNavItem = false"
+        @keyup.left="prevNavItem(index, nav)"
+        @keyup.right="nextNavItem(index, nav)"
+        @keyup.down="!selectedNavChild ? nextNavChild(-1, n.children) : ''">
         <a
+          v-change-focus
+          :is-focused="n === selectedNavItem"
           @focus="navItemFocus(n)"
           href="#">{{n.name}}</a>
         <ul
@@ -138,8 +143,13 @@ nav ul {
           <li
             role="menuitem"
             v-for="(c, c_index) in n.children"
-            :key="c_index">
-            <a href="#">{{c}}</a>
+            :key="c_index"
+            @keyup.up="prevNavChild(c_index, n.children)"
+            @keyup.down="nextNavChild(c_index, n.children)">
+            <a
+              v-change-focus
+              :is-focused="c === selectedNavChild"
+              :href="`#${c_index}`">{{c}}</a>
           </li>
         </ul>
       </li>
@@ -148,10 +158,20 @@ nav ul {
 </main>
 
 <script>
-var app = new Vue({
+new Vue({
   el: '#app',
+  directives: {
+    changeFocus: {
+      componentUpdated: (el, binding, vnode) => {
+        if (vnode.data.attrs['is-focused']) {
+          el.focus()
+        }
+      }
+    }
+  },
   data: {
     selectedNavItem: false,
+    selectedNavChild: false,
     nav: [
       {
         name: 'Women',
@@ -202,6 +222,28 @@ var app = new Vue({
     },
     isItemFocused (i) {
       return this.selectedNavItem === i
+    },
+    prevNavItem (index, siblings) {
+      this.selectedNavChild = false
+      const prevIndex = index - 1 < 0 ? siblings.length - 1 : index - 1
+      const prevItem = siblings[prevIndex]
+
+      this.navItemFocus(prevItem)
+      this.selectedNavItem = prevItem
+    },
+    nextNavItem (index, siblings) {
+      this.selectedNavChild = false
+      const nextIndex = index + 1 > siblings.length - 1 ? 0 : index + 1
+      const nextItem = siblings[nextIndex]
+
+      this.navItemFocus(nextItem)
+      this.selectedNavItem = nextItem
+    },
+    prevNavChild (index, siblings) {
+      this.selectedNavChild = siblings[index - 1]
+    },
+    nextNavChild (index, siblings) {
+      this.selectedNavChild = siblings[index + 1]
     }
   }
 })
