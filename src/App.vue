@@ -25,6 +25,8 @@
             v-change-focus
             :is-focused="n === selectedNavItem"
             @focus="navItemFocus(n)"
+            v-shortkey.once="[index + 1]"
+            @shortkey="navItemFocus(n)"
             href="#">{{n.name}}</a>
           <ul
             class="access-submenu"
