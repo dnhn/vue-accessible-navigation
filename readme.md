@@ -16,3 +16,7 @@ npm run build
 ```
 
 For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+# References
+- https://www.w3.org/WAI/tutorials/menus
+- https://adobe-accessibility.github.io/Accessible-Mega-Menu
