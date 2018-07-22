@@ -1,10 +1,15 @@
 <template>
-  <main id="app">
+  <main
+    id="app"
+    v-shortkey.once="['s']"
+    @shortkey="startSpeechRecognition()">
     <header>
       <h1>Accessible Drop Down Menu</h1>
     </header>
 
     <p class="guide">Use tab, arrow, number keys and your voice to navigate through the menu.</p>
+    <p class="guide">To start speaking, press <strong>S</strong> on your keyboard or <button tabindex="0" @click="startSpeechRecognition()">click here</button> and follow the syntax below.<br>
+    <pre>(open | select | show) (link | menu | item) number &lt;number&gt;</pre></p>
 
     <nav role="navigation">
       <ul
@@ -47,6 +52,12 @@
         </li>
       </ul>
     </nav>
+
+    <p
+      class="transcript"
+      :style="{opacity: recognitionResults.length ? 1 : 0}">
+      {{recognitionResults}}
+    </p>
   </main>
 </template>
 
@@ -64,6 +75,7 @@ export default {
   },
   data () {
     return {
+      recognitionResults: '',
       selectedNavItem: false,
       selectedNavChild: false,
       nav: [
@@ -102,17 +114,126 @@ export default {
         {
           name: 'Sale',
           children: [
-            'Men\'s Sale',
-            'Women\'s Sale',
+            'Men’s Sale',
+            'Women’s Sale',
             'Plus Sale',
-            'Kids\' Sale'
+            'Kids’ Sale'
           ]
         },
         { name: 'Customise' }
       ]
     }
   },
+  mounted () {
+    let speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    let speechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
+    let speechRecognitionEvent = window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent
+    let grammarList = {
+      actions: ['open', 'select', 'show'],
+      subjects: ['link', 'menu', 'item'],
+      numbers: ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+    }
+    let grammarNumbers = ''
+
+    for (let i = 0; i < grammarList.numbers.length; ++i) {
+      grammarNumbers += `${i === 0 ? '' : ' '}(${i} | ${grammarList.numbers[i]})`
+    }
+
+    let grammar = `#JSGF V1.0;
+grammar menu;
+<actions> = ${grammarList.actions.join(' | ')} ;
+<subjects> = ${grammarList.subjects.join(' | ')} ;
+<numbers> = ${grammarNumbers} ;
+public <command> = <actions> <subjects> number <numbers> ;
+`
+    let result = ''
+
+    if (speechRecognition) {
+      let speechRecognitionList = new speechGrammarList()
+      speechRecognitionList.addFromString(grammar, 1)
+
+      this.recognition = new speechRecognition()
+      this.recognition.grammars = speechRecognitionList
+      this.recognition.lang = 'en-US'
+      this.recognition.interimResults = true
+      this.recognition.maxAlternatives = 1
+
+      this.recognition.onstart = () => {
+        this.recognitionResults = 'Listening…'
+      }
+
+      this.recognition.onspeechend = () => {
+        this.recognitionResults = ''
+        this.recognition.stop()
+      }
+
+      this.recognition.onend = () => {
+        const splitted = result.split(' ')
+        const last = splitted[splitted.length - 1]
+
+        if (Number.isInteger(parseInt(last))) {
+          this.navItemFocus(this.nav[parseInt(last) - 1])
+          this.recognitionResults = ''
+        } else if (grammarList.numbers.indexOf(last) !== -1) {
+          const index = grammarList.numbers.indexOf(last) - 1
+          this.navItemFocus(this.nav[index])
+          this.recognitionResults = ''
+        }
+      }
+
+      this.recognition.onresult = e => {
+        result = e.results[0][0]['transcript']
+        this.recognitionResults = result
+      }
+
+      this.recognition.onnomatch = () => {
+        this.recognitionResults = 'Speech not recognised.'
+      }
+
+      this.recognition.onerror = e => {
+        console.log(e)
+
+        switch (e.error) {
+          case 'no-speech': {
+            this.recognitionResults = `Error: no speech was detected.`
+            break
+          }
+          case 'aborted': {
+            this.recognitionResults = `Error: recognition is aborted.`
+            break
+          }
+          case 'audio-capture': {
+            this.recognitionResults = `Error: audio capture failed.`
+            break
+          }
+          case 'network': {
+            this.recognitionResults = `Error: network failure.`
+            break
+          }
+          case 'not-allowed':
+          case 'service-not-allowed': {
+            this.recognitionResults = `Error: speech recognition is not allowed.`
+            break
+          }
+          case 'language-not-supported': {
+            this.recognitionResults = `Error: language is not supported.`
+            break
+          }
+          case 'bad-grammar':
+          default: this.recognitionResults = `Error: ${e.error}.`
+        }
+      }
+    }
+  },
   methods: {
+    startSpeechRecognition () {
+      try {
+        this.recognition.start()
+      } catch (e) {
+        this.recognition.stop()
+        this.recognitionResults = 'Speech recognition stopped.'
+      }
+    },
     navItemFocus (i) {
       this.selectedNavItem = i
     },
@@ -248,5 +369,13 @@ nav ul {
 
 .guide {
   margin: 2em;
+}
+
+.transcript {
+  margin: 4em;
+  font-style: italic;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity .5s ease;
 }
 </style>
