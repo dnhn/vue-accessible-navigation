@@ -8,7 +8,7 @@
     </header>
 
     <p class="guide">Use tab, arrow, number keys and your voice to navigate through the menu.</p>
-    <p class="guide">To start speaking, press <strong>S</strong> on your keyboard or <button tabindex="0" @click="startSpeechRecognition()">click here</button> and follow the syntax below.<br>
+    <p class="guide">To start speaking, press <strong>S</strong> on your keyboard or <button type="button" @click="startSpeechRecognition()">click here</button> and follow the syntax below.<br>
     <pre>(open | select | show) (link | menu | item) number &lt;number&gt;</pre></p>
 
     <nav role="navigation">

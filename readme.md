@@ -22,11 +22,13 @@ For detailed explanation on how things work, consult the [docs for vue-loader](h
   - [x] hover, focus
   - [x] tab, arrow keys
 - [x] Netlify deployment (https://admiring-lewin-c013ff.netlify.com)
+- [x] Pass accessibility validation ([result](http://wave.webaim.org/report#/https://admiring-lewin-c013ff.netlify.com))
 
 # Advanced features
-- [x] Opening menu by number keys using `vue-shortkey`
+- [x] Opening menu by number keys using
+  [`vue-shortkey`](https://github.com/iFgR/vue-shortkey)
 - [x] Opening menu by voice using Speech Recognition
-- [x] Provice voice feedback to user using Speech Synthesis
+- [x] Providing voice feedback using Speech Synthesis
 
 # References
 - https://www.w3.org/WAI/tutorials/menus
