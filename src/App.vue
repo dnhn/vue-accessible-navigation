@@ -160,6 +160,7 @@ public <command> = <actions> <subjects> number <numbers> ;
 
       this.recognition.onstart = () => {
         this.recognitionResults = 'Listening…'
+        this.synthSpeak('Listening…')
       }
 
       this.recognition.onspeechend = () => {
@@ -173,10 +174,12 @@ public <command> = <actions> <subjects> number <numbers> ;
 
         if (Number.isInteger(parseInt(last))) {
           this.navItemFocus(this.nav[parseInt(last) - 1])
+          this.synthSpeak(`Open menu ${last}`)
           this.recognitionResults = ''
         } else if (grammarList.numbers.indexOf(last) !== -1) {
           const index = grammarList.numbers.indexOf(last) - 1
           this.navItemFocus(this.nav[index])
+          this.synthSpeak(`Open menu ${last}`)
           this.recognitionResults = ''
         }
       }
@@ -188,6 +191,7 @@ public <command> = <actions> <subjects> number <numbers> ;
 
       this.recognition.onnomatch = () => {
         this.recognitionResults = 'Speech not recognised.'
+        this.synthSpeak('Speech not recognised.')
       }
 
       this.recognition.onerror = e => {
@@ -195,32 +199,48 @@ public <command> = <actions> <subjects> number <numbers> ;
 
         switch (e.error) {
           case 'no-speech': {
-            this.recognitionResults = `Error: no speech was detected.`
+            const text = 'Error: no speech was detected.'
+            this.recognitionResults = text
+            this.synthSpeak(text)
             break
           }
           case 'aborted': {
-            this.recognitionResults = `Error: recognition is aborted.`
+            const text = 'Error: recognition is aborted.'
+            this.recognitionResults = text
+            this.synthSpeak(text)
             break
           }
           case 'audio-capture': {
-            this.recognitionResults = `Error: audio capture failed.`
+            const text = 'Error: audio capture failed.'
+            this.recognitionResults = text
+            this.synthSpeak(text)
             break
           }
           case 'network': {
-            this.recognitionResults = `Error: network failure.`
+            const text = 'Error: network failure.'
+            this.recognitionResults = text
+            this.synthSpeak(text)
             break
           }
           case 'not-allowed':
           case 'service-not-allowed': {
-            this.recognitionResults = `Error: speech recognition is not allowed.`
+            const text = 'Error: speech recognition is not allowed.'
+            this.recognitionResults = text
+            this.synthSpeak(text)
             break
           }
           case 'language-not-supported': {
-            this.recognitionResults = `Error: language is not supported.`
+            const text = 'Error: language is not supported.'
+            this.recognitionResults = text
+            this.synthSpeak(text)
             break
           }
           case 'bad-grammar':
-          default: this.recognitionResults = `Error: ${e.error}.`
+          default: {
+            const text = `Error: ${e.error}.`
+            this.recognitionResults = text
+            this.synthSpeak(text)
+          }
         }
       }
     }
@@ -230,8 +250,18 @@ public <command> = <actions> <subjects> number <numbers> ;
       try {
         this.recognition.start()
       } catch (e) {
+        let text = 'Speech recognition stopped.'
+
         this.recognition.stop()
-        this.recognitionResults = 'Speech recognition stopped.'
+        this.recognitionResults = text
+        this.synthSpeak(text)
+      }
+    },
+    synthSpeak (text = '') {
+      let synth = window.speechSynthesis
+
+      if (synth && text.length) {
+        synth.speak(new SpeechSynthesisUtterance(text))
       }
     },
     navItemFocus (i) {
