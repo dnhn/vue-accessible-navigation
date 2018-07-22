@@ -21,7 +21,7 @@ For detailed explanation on how things work, consult the [docs for vue-loader](h
 - [x] Make links accessible
   - [x] hover, focus
   - [x] tab, arrow keys
-- [x] Netlify deployment
+- [x] Netlify deployment (https://admiring-lewin-c013ff.netlify.com)
 
 # Advanced features
 - [x] Opening menu by number keys using `vue-shortkey`
