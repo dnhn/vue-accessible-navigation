@@ -182,6 +182,8 @@ public <command> = <actions> <subjects> number <numbers> ;
           this.synthSpeak(`Open menu ${last}`)
           this.recognitionResults = ''
         }
+
+        result = ''
       }
 
       this.recognition.onresult = e => {
