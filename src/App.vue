@@ -275,18 +275,14 @@ public <command> = <actions> <subjects> number <numbers> ;
     prevNavItem (index, siblings) {
       this.selectedNavChild = false
       const prevIndex = index - 1 < 0 ? siblings.length - 1 : index - 1
-      const prevItem = siblings[prevIndex]
 
-      this.navItemFocus(prevItem)
-      this.selectedNavItem = prevItem
+      this.navItemFocus(siblings[prevIndex])
     },
     nextNavItem (index, siblings) {
       this.selectedNavChild = false
       const nextIndex = index + 1 > siblings.length - 1 ? 0 : index + 1
-      const nextItem = siblings[nextIndex]
 
-      this.navItemFocus(nextItem)
-      this.selectedNavItem = nextItem
+      this.navItemFocus(siblings[nextIndex])
     },
     prevNavChild (index, siblings) {
       this.selectedNavChild = siblings[index - 1]
