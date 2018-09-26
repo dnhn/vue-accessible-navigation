@@ -342,10 +342,6 @@ nav ul {
   display: block;
   padding: .5em 2em;
   text-decoration: none;
-  -webkit-transition: all .2s linear;
-  -moz-transition: all .2s linear;
-  -ms-transition: all .2s linear;
-  -o-transition: all .2s linear;
   transition: all .2s linear;
 }
 
